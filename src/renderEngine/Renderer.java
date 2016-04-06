@@ -25,7 +25,7 @@ public class Renderer
 		GL20.glEnableVertexAttribArray(0);
 
 		// Draw the stored data as triangles.
-		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, model.getVertexCount());
+		GL11.glDrawElements(GL11.GL_TRIANGLES, model.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 
 		// Finally, disable and unbind the attribute and vertex array.
 		GL20.glDisableVertexAttribArray(0);
