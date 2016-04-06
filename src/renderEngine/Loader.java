@@ -92,6 +92,7 @@ public class Loader
 
 	private void bindIndicesBuffer(int[] indices)
 	{
+		// Generate a VBO.
 		int vboID = GL15.glGenBuffers();
 		vbos.add(vboID);
 
