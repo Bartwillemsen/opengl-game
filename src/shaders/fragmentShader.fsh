@@ -1,13 +1,12 @@
 #version 400 core
 
-// The colour sent from the vertex shader.
-// The color is an interpolated color value of the vertex shader
-// output color.
-in vec3 colour;
+in vec2 pass_textureCoords;
 
 out vec4 out_Color;
 
+uniform sampler2D textureSampler;
+
 void main(void)
 {
-    out_Color = vec4(colour, 1.0);
+    out_Color = texture(textureSampler, pass_textureCoords);
 }

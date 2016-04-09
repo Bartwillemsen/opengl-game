@@ -37,16 +37,26 @@ public abstract class ShaderProgram
 		GL20.glValidateProgram(programID);
 	}
 
+	/**
+	 * Start a shader program.
+	 */
 	public void start()
 	{
 		GL20.glUseProgram(programID);
 	}
 
+	/**
+	 * Stop the currently started shader program.
+	 */
 	public void stop()
 	{
 		GL20.glUseProgram(0);
 	}
 
+	/**
+	 * Clean up by first detaching and then deleting both the vertex and
+	 * fragment shaders. Finally delete the program itself.
+	 */
 	public void cleanUp()
 	{
 		stop();
