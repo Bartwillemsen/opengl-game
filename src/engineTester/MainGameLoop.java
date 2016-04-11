@@ -46,6 +46,9 @@ public class MainGameLoop
 		Entity entity = new Entity(texturedModel, new Vector3f(-1, 0, 0), 0, 0, 0, 1);
 
 		while (! Display.isCloseRequested()) {
+			entity.increasePosition(0.002f, 0, 0);
+			entity.increaseRotation(0, 1, 0);
+
 			renderer.prepare();
 
 			// Start the shader program. Render the model, and finally stop
