@@ -8,9 +8,11 @@ in vec2 textureCoords;
 
 out vec2 pass_textureCoords;
 
+uniform mat4 transformationMatrix;
+
 void main(void)
 {
-    gl_Position = vec4(position, 1.0);
+    gl_Position = transformationMatrix * vec4(position, 1.0);
 
     // We pass the incoming texture coordinates straight to the fragment shader.
     pass_textureCoords = textureCoords;
