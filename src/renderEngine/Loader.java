@@ -1,11 +1,16 @@
 package renderEngine;
 
+import models.RawModel;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -16,22 +21,48 @@ public class Loader
 	// Keeps track of all the VAOs and VBOs we create.
 	private List<Integer> vaos = new ArrayList<>();
 	private List<Integer> vbos = new ArrayList<>();
+	private List<Integer> textures = new ArrayList<>();
+
 	/**
 	 * Create a new VAO and create a new RawModel in it.
 	 *
 	 * @param  positions  The vertex positions
 	 * @return A new RawModel object
 	 */
-	public RawModel loadToVAO(float[] positions, int[] indices)
+	public RawModel loadToVAO(float[] positions, float[] textureCoords, int[] indices)
 	{
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
-		storeDataInAttributeList(0, positions);
+
+		storeDataInAttributeList(0, 3, positions);
+		storeDataInAttributeList(1, 2, textureCoords);
+
 		unbindVAO();
 
 		// Create a new model. We divide by three because a position consists
 		// of three elements.
 		return new RawModel(vaoID, indices.length);
+	}
+
+	/**
+	 * Load a texture image.
+	 *
+	 * @param  fileName  The name of the texture (relative to the res folder).
+	 * @return The ID of the loaded texture
+	 */
+	public int loadTexture(String fileName)
+	{
+		Texture texture = null;
+		try {
+			texture = TextureLoader.getTexture("PNG", new FileInputStream("res/" + fileName + ".png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		int textureID = texture != null ? texture.getTextureID() : 0;
+		textures.add(textureID);
+
+		return textureID;
 	}
 
 	/**
@@ -42,6 +73,8 @@ public class Loader
 		vaos.forEach(GL30::glDeleteVertexArrays);
 
 		vbos.forEach(GL15::glDeleteBuffers);
+
+		textures.forEach(GL11::glDeleteTextures);
 	}
 
 	/**
@@ -62,10 +95,11 @@ public class Loader
 	/**
 	 * Store the data in the attribute list of the VAO.
 	 *
-	 * @param attributeNumber  The number of the attribute list where we want to store the datas
-	 * @param data             The actual data we want to store
+	 * @param  attributeNumber  The number of the attribute list where we want to store the datas
+	 * @param  coordinateSize   The size of each coordinate in the attribute list
+	 * @param  data             The actual data we want to store
 	 */
-	private void storeDataInAttributeList(int attributeNumber, float[] data)
+	private void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data)
 	{
 		// Generate a VBO to store our data.
 		int vboID = GL15.glGenBuffers();
@@ -78,7 +112,7 @@ public class Loader
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
 
 		// Put the VBO in the attribute list of a VAO and unbind the VBO.
-		GL20.glVertexAttribPointer(attributeNumber, 3, GL11.GL_FLOAT, false, 0, 0);
+		GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0, 0);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 	}
 
