@@ -1,7 +1,9 @@
 package engineTester;
 
+import entities.Entity;
 import models.TexturedModel;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.util.vector.Vector3f;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import models.RawModel;
@@ -39,8 +41,9 @@ public class MainGameLoop
 		};
 
 		RawModel model = loader.loadToVAO(vertices, textureCoords, indices);
-		ModelTexture texture = new ModelTexture(loader.loadTexture("brick-texture"));
-		TexturedModel texturedModel = new TexturedModel(model, texture);
+		TexturedModel texturedModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("brick-texture")));
+
+		Entity entity = new Entity(texturedModel, new Vector3f(-1, 0, 0), 0, 0, 0, 1);
 
 		while (! Display.isCloseRequested()) {
 			renderer.prepare();
@@ -48,7 +51,7 @@ public class MainGameLoop
 			// Start the shader program. Render the model, and finally stop
 			// it again.
 			shader.start();
-			renderer.render(texturedModel);
+			renderer.render(entity, shader);
 			shader.stop();
 
 			DisplayManager.updateDisplay();
