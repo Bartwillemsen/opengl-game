@@ -20,6 +20,13 @@ public class Entity
 		this.scale = scale;
 	}
 
+	/**
+	 * Move the entity.
+	 *
+	 * @param  dx  The x value to be added.
+	 * @param  dy  The y value to be added.
+	 * @param  dz  The z value to be added.
+	 */
 	public void increasePosition(float dx, float dy, float dz)
 	{
 		this.position.x += dx;
@@ -27,6 +34,13 @@ public class Entity
 		this.position.z += dz;
 	}
 
+	/**
+	 * Rotate the entity.
+	 *
+	 * @param  dx  The amount of rotation around the x axis.
+ 	 * @param  dy  The amount of rotation around the y axis.
+	 * @param  dz  The amount of rotation around the z axis.
+	 */
 	public void increaseRotation(float dx, float dy, float dz)
 	{
 		this.rotX += dx;

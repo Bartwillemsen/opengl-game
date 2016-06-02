@@ -111,21 +111,45 @@ public abstract class ShaderProgram
 		GL20.glBindAttribLocation(programID, attribute, variableName);
 	}
 
+	/**
+	 * Load a float value in the uniform location.
+	 *
+	 * @param location  The reference to the uniform
+	 * @param value     The value being loaded in the uniform
+	 */
 	protected void loadFloat(int location, float value)
 	{
 		GL20.glUniform1f(location, value);
 	}
 
+	/**
+	 * Load a vector in the uniform location.
+	 *
+	 * @param  location  The reference to the uniform
+	 * @param  vector    The vector being loaded in the location
+	 */
 	protected void loadVector(int location, Vector3f vector)
 	{
 		GL20.glUniform3f(location, vector.x, vector.y, vector.z);
 	}
 
+	/**
+	 * Load a boolean value in the uniform location.
+	 *
+	 * @param  location  The reference to the uniform
+	 * @param  value     The value (0 or 1) being loaded in the location
+	 */
 	protected void loadBoolean(int location, boolean value)
 	{
 		GL20.glUniform1f(location, (value) ? 1 : 0);
 	}
 
+	/**
+	 * Load a matrix in the uniform location.
+	 *
+	 * @param  location  The reference to the uniform
+	 * @param  matrix    The matrix being loaded in the location
+	 */
 	protected void loadMatrix(int location, Matrix4f matrix)
 	{
 		matrix.store(matrixBuffer);

@@ -95,7 +95,7 @@ public class Loader
 	/**
 	 * Store the data in the attribute list of the VAO.
 	 *
-	 * @param  attributeNumber  The number of the attribute list where we want to store the datas
+	 * @param  attributeNumber  The number of the attribute list where we want to store the data
 	 * @param  coordinateSize   The size of each coordinate in the attribute list
 	 * @param  data             The actual data we want to store
 	 */
