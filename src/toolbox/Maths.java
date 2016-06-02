@@ -1,5 +1,6 @@
 package toolbox;
 
+import entities.Camera;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -35,5 +36,32 @@ public class Maths
 		Matrix4f.scale(new Vector3f(scale, scale, scale), matrix, matrix);
 
 		return matrix;
+	}
+
+	/**
+	 * Create a view matrix. This acts as a camera in the game world.
+	 *
+	 * The camera actually moves the world in the opposite direction instead of
+	 * moving an actual camera around the world in the direction we want too.
+	 *
+	 * @param  camera  The camera object
+	 * @return The view matrix with the camera positions applied
+	 */
+	public static Matrix4f createViewMatrix(Camera camera)
+	{
+		Matrix4f viewMatrix = new Matrix4f();
+		viewMatrix.setIdentity();
+
+		// Rotate the matrix by using the camera pith and yaw (x and y values).
+		Matrix4f.rotate((float) Math.toRadians(camera.getPitch()), new Vector3f(1, 0, 0), viewMatrix, viewMatrix);
+		Matrix4f.rotate((float) Math.toRadians(camera.getYaw()), new Vector3f(0, 1, 0), viewMatrix, viewMatrix);
+
+		// Get the camera position and reverse the values.
+		Vector3f cameraPos = camera.getPosition();
+		Vector3f negativeCameraPos = new Vector3f(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+
+		Matrix4f.translate(negativeCameraPos, viewMatrix, viewMatrix);
+
+		return viewMatrix;
 	}
 }
