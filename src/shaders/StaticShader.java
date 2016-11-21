@@ -1,6 +1,7 @@
 package shaders;
 
 import entities.Camera;
+import entities.Light;
 import org.lwjgl.util.vector.Matrix4f;
 import toolbox.Maths;
 
@@ -24,6 +25,16 @@ public class StaticShader extends ShaderProgram
 	 */
 	private int location_viewMatrix;
 
+	/**
+	 * The location of the light position uniform in the shader program.
+	 */
+	private int location_lightPosition;
+
+	/**
+	 * The location of the light colour uniform in the shader program.
+	 */
+	private int location_lightColour;
+
 	public StaticShader()
 	{
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -34,6 +45,7 @@ public class StaticShader extends ShaderProgram
 	{
 		super.bindAttribute(0, "position");
 		super.bindAttribute(1, "textureCoords");
+		super.bindAttribute(2, "normal");
 	}
 
 	/**
@@ -45,6 +57,8 @@ public class StaticShader extends ShaderProgram
 		location_transformationMatrix = super.getUniformLocation("transformationMatrix");
 		location_projectionMatrix = super.getUniformLocation("projectionMatrix");
 		location_viewMatrix = super.getUniformLocation("viewMatrix");
+		location_lightPosition = super.getUniformLocation("lightPosition");
+		location_lightColour = super.getUniformLocation("lightColour");
 	}
 
 	/**
@@ -55,6 +69,17 @@ public class StaticShader extends ShaderProgram
 	public void loadTransformationMatrix(Matrix4f matrix)
 	{
 		super.loadMatrix(location_transformationMatrix, matrix);
+	}
+
+	/**
+	 * Load the light instance in the uniform location in the shader program.
+	 *
+	 * @param  light  The Light instance
+	 */
+	public void loadLight(Light light)
+	{
+		super.loadVector(location_lightPosition, light.getPosition());
+		super.loadVector(location_lightColour, light.getColour());
 	}
 
 	/**

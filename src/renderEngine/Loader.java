@@ -26,16 +26,20 @@ public class Loader
 	/**
 	 * Create a new VAO and create a new RawModel in it.
 	 *
-	 * @param  positions  The vertex positions
+	 * @param  positions      The vertex positions
+	 * @param  textureCoords  The texture coordinates
+	 * @param  normals        The normal vectors
+	 * @param  indices        The indices
 	 * @return A new RawModel object
 	 */
-	public RawModel loadToVAO(float[] positions, float[] textureCoords, int[] indices)
+	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices)
 	{
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
 
 		storeDataInAttributeList(0, 3, positions);
 		storeDataInAttributeList(1, 2, textureCoords);
+		storeDataInAttributeList(2, 3, normals);
 
 		unbindVAO();
 

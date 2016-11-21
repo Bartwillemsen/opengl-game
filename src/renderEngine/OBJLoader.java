@@ -79,7 +79,8 @@ public class OBJLoader
 
 					normals.add(normal);
 
-				// Faces.
+				// Faces. Here we reserve enough room for the given texture and normal
+				// values.
 				} else if (line.startsWith("f ")) {
 					textureArray = new float[vertices.size() * 2];
 					normalsArray = new float[vertices.size() * 3];
@@ -123,9 +124,19 @@ public class OBJLoader
 			indicesArray[i] = indices.get(i);
 		}
 
-		return loader.loadToVAO(verticesArray, textureArray, indicesArray);
+		return loader.loadToVAO(verticesArray, textureArray, normalsArray, indicesArray);
 	}
 
+	/**
+	 * Process a vertex point.
+	 *
+	 * @param vertexData
+	 * @param indices
+	 * @param textures
+	 * @param normals
+	 * @param textureArray
+	 * @param normalsArray
+	 */
 	private static void processVertex(
 		String[] vertexData,
 		List<Integer> indices,

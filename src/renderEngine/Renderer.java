@@ -55,6 +55,7 @@ public class Renderer
 
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
+		GL20.glEnableVertexAttribArray(2);
 
 		// Create a transformation matrix from the entity information.
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(
@@ -78,6 +79,7 @@ public class Renderer
 		// Finally, disable and unbind the attribute and vertex array.
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
+		GL20.glDisableVertexAttribArray(2);
 		GL30.glBindVertexArray(0);
 	}
 
