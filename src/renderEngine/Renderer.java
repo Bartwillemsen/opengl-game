@@ -6,6 +6,7 @@ import models.TexturedModel;
 import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Matrix4f;
 import shaders.StaticShader;
+import textures.ModelTexture;
 import toolbox.Maths;
 
 public class Renderer
@@ -36,7 +37,7 @@ public class Renderer
 	{
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		GL11.glClearColor(0, 0.3f, 0f, 1f);
+		GL11.glClearColor(0.3f, 0f, 0.0f, 1f);
 	}
 
 	/**
@@ -67,6 +68,10 @@ public class Renderer
 		);
 
 		shader.loadTransformationMatrix(transformationMatrix);
+
+		// Load the reflectivity value of the model into the shader.
+		ModelTexture texture = model.getTexture();
+		shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
 
 		// Activate and fill a texture bank. Texture bank 0 is used by default by the
 		// texture sampler in the fragment shader.

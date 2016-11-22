@@ -10,30 +10,14 @@ public class StaticShader extends ShaderProgram
 	private static final String VERTEX_FILE = "src/shaders/vertexShader.vsh";
 	private static final String FRAGMENT_FILE = "src/shaders/fragmentShader.fsh";
 
-	/**
-	 * The location of the transformationMatrix in the shader program.
-	 */
+	// All of the uniform locations in the shader program.
 	private int location_transformationMatrix;
-
-	/**
-	 * The location of the projectionMatrix in the shader program.
-	 */
 	private int location_projectionMatrix;
-
-	/**
-	 * The location of the viewMatrix in the shader program.
-	 */
 	private int location_viewMatrix;
-
-	/**
-	 * The location of the light position uniform in the shader program.
-	 */
 	private int location_lightPosition;
-
-	/**
-	 * The location of the light colour uniform in the shader program.
-	 */
 	private int location_lightColour;
+	private int location_shineDamper;
+	private int location_reflectivity;
 
 	public StaticShader()
 	{
@@ -59,6 +43,21 @@ public class StaticShader extends ShaderProgram
 		location_viewMatrix = super.getUniformLocation("viewMatrix");
 		location_lightPosition = super.getUniformLocation("lightPosition");
 		location_lightColour = super.getUniformLocation("lightColour");
+		location_shineDamper = super.getUniformLocation("shineDamper");
+		location_reflectivity = super.getUniformLocation("reflectivity");
+	}
+
+	/**
+	 * Load the shine variables into the appropriate uniform location in the
+	 * shader program.
+	 *
+	 * @param  damper        The dampning value
+	 * @param  reflectivity  The reflectivity value
+	 */
+	public void loadShineVariables(float damper, float reflectivity)
+	{
+		super.loadFloat(location_shineDamper, damper);
+		super.loadFloat(location_reflectivity, reflectivity);
 	}
 
 	/**
