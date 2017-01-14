@@ -4,6 +4,9 @@ import entities.Camera;
 import entities.Entity;
 import entities.Light;
 import models.TexturedModel;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Matrix4f;
 import shaders.StaticShader;
 
 import java.util.ArrayList;
@@ -13,6 +16,12 @@ import java.util.Map;
 
 public class MasterRenderer
 {
+	private static final float FOV = 70;
+	private static final float NEAR_PLANE = 0.1f;
+	private static final float FAR_PLANE = 1000f;
+
+	private Matrix4f projectionMatrix;
+
 	/**
 	 * The StaticShader instance.
 	 */
@@ -21,12 +30,24 @@ public class MasterRenderer
 	/**
 	 * The renderer instance.
 	 */
-	private Renderer renderer = new Renderer(shader);
+	private EntityRenderer renderer;
 
 	/**
 	 * A hashmap containing all of the Textured Models and all of their entities.
 	 */
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<>();
+
+	public MasterRenderer()
+	{
+		// Make sure faces that point away of the camera are not rendered.
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glCullFace(GL11.GL_BACK);
+
+		// Initiate the projection matrix. This is used for all the renderers.
+		createProjectionMatrix();
+
+		renderer = new EntityRenderer(shader, projectionMatrix);
+	}
 
 	/**
 	 * Render all of the entities on the screen.
@@ -36,7 +57,7 @@ public class MasterRenderer
 	 */
 	public void render(Light sun, Camera camera)
 	{
-		renderer.prepare();
+		prepare();
 
 		// Start the shader and load the light source and camera.
 		shader.start();
@@ -48,6 +69,16 @@ public class MasterRenderer
 
 		shader.stop();
 		entities.clear();
+	}
+
+	/**
+	 * Prepare the screen for rendering.
+	 */
+	public void prepare()
+	{
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		GL11.glClearColor(0.3f, 0f, 0.0f, 1f);
 	}
 
 	/**
@@ -80,5 +111,35 @@ public class MasterRenderer
 	public void cleanUp()
 	{
 		shader.cleanUp();
+	}
+
+	/**
+	 * Create the projection matrix.
+	 */
+	private void createProjectionMatrix()
+	{
+		float aspectRatio = (float) Display.getWidth() / (float) Display.getHeight();
+		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))) * aspectRatio);
+		float x_scale = y_scale / aspectRatio;
+		float frustum_length = FAR_PLANE - NEAR_PLANE;
+
+		/*
+		 * [ (1/tan(fov/2))/a  0               0       0                   ]
+		 * [ 0                 1/tan(fov/2)    0       0                   ]
+		 * [ 0                 0               -zp/zm  -(2*Zfar*Znear)/zm  ]
+		 * [ 0                 0               -1      0                   ]
+		 *
+		 * a   = aspect ratio
+		 * fov = Field of View
+		 * zm  = Zfar - Znear
+		 * zp  = Zfar + Znear
+		 */
+		projectionMatrix = new Matrix4f();
+		projectionMatrix.m00 = x_scale;
+		projectionMatrix.m11 = y_scale;
+		projectionMatrix.m22 = -((FAR_PLANE + NEAR_PLANE) / frustum_length);
+		projectionMatrix.m23 = -1;
+		projectionMatrix.m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustum_length);
+		projectionMatrix.m33 = 0;
 	}
 }
