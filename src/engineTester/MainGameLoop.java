@@ -8,6 +8,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 import renderEngine.*;
 import models.RawModel;
+import terrains.Terrain;
 import textures.ModelTexture;
 
 import java.util.ArrayList;
@@ -23,32 +24,31 @@ public class MainGameLoop
 		Loader loader = new Loader();
 
 		// Load the OBJ model.
-		RawModel model = OBJLoader.loadObjModel("cube", loader);
+		RawModel model = OBJLoader.loadObjModel("tree", loader);
 
-		TexturedModel cubeModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("brick-texture")));
+		TexturedModel staticModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("tree")));
 
-		Light light = new Light(new Vector3f(200, 200, 100), new Vector3f(1, 1, 1));
-		Camera camera = new Camera();
-
-		List<Entity> cubes = new ArrayList<>();
+		List<Entity> entities = new ArrayList<>();
 		Random random = new Random();
-
-		for (int i = 0; i < 200; i++) {
-			float x = random.nextFloat() * 100 - 50;
-			float y = random.nextFloat() * 100 - 50;
-			float z = random.nextFloat() * -300;
-
-			cubes.add(new Entity(cubeModel, new Vector3f(x, y, z), random.nextFloat() * 180f, random.nextFloat() * 180f, 0, 2f));
+		for (int i = 0; i < 500; i++) {
+			entities.add(new Entity(staticModel, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600), 0, 0, 0, 3));
 		}
+
+		Light light = new Light(new Vector3f(3000, 2000, 2000), new Vector3f(1, 1, 1));
+
+		Terrain terrain = new Terrain(-1, -1, loader, new ModelTexture(loader.loadTexture("grass")));
+		Terrain terrain2 = new Terrain(-0, -1, loader, new ModelTexture(loader.loadTexture("grass")));
+		Camera camera = new Camera();
 
 		MasterRenderer renderer = new MasterRenderer();
 		while (! Display.isCloseRequested()) {
 			camera.move();
 
-			// Start the shader program. Render the model, and finally stop
-			// it again.
-			for (Entity c : cubes) {
-				renderer.processEntity(c);
+			renderer.processTerrain(terrain);
+			renderer.processTerrain(terrain2);
+
+			for (Entity entity : entities) {
+				renderer.processEntity(entity);
 			}
 
 			renderer.render(light, camera);

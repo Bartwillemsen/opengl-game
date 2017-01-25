@@ -8,6 +8,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 import shaders.StaticShader;
+import shaders.TerrainShader;
+import terrains.Terrain;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,10 +34,13 @@ public class MasterRenderer
 	 */
 	private EntityRenderer renderer;
 
+	private TerrainRenderer terrainRenderer;
+	private TerrainShader terrainShader = new TerrainShader();
 	/**
 	 * A hashmap containing all of the Textured Models and all of their entities.
 	 */
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<>();
+	private List<Terrain> terrains = new ArrayList<>();
 
 	public MasterRenderer()
 	{
@@ -47,6 +52,7 @@ public class MasterRenderer
 		createProjectionMatrix();
 
 		renderer = new EntityRenderer(shader, projectionMatrix);
+		terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
 	}
 
 	/**
@@ -66,8 +72,17 @@ public class MasterRenderer
 
 		// Render all of the entities as one batch.
 		renderer.render(entities);
-
 		shader.stop();
+
+		// Now initialize the shader for the terrain.
+		terrainShader.start();
+		terrainShader.loadLight(sun);
+		terrainShader.loadViewMatrix(camera);
+
+		terrainRenderer.render(terrains);
+		terrainShader.stop();
+
+		terrains.clear();
 		entities.clear();
 	}
 
@@ -78,7 +93,12 @@ public class MasterRenderer
 	{
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		GL11.glClearColor(0.3f, 0f, 0.0f, 1f);
+		GL11.glClearColor(0.49f, 0.89f, 0.98f, 1f);
+	}
+
+	public void processTerrain(Terrain terrain)
+	{
+		terrains.add(terrain);
 	}
 
 	/**
@@ -111,6 +131,7 @@ public class MasterRenderer
 	public void cleanUp()
 	{
 		shader.cleanUp();
+		terrainShader.cleanUp();
 	}
 
 	/**
